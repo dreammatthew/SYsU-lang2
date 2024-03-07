@@ -28,7 +28,8 @@ void
 print_token(const antlr4::Token* token,
             const antlr4::CommonTokenStream& tokens,
             std::ofstream& outFile,
-            const antlr4::Lexer& lexer)
+            const antlr4::Lexer& lexer,
+            std::string f)
 {
   auto& vocabulary = lexer.getVocabulary();
 
@@ -41,18 +42,30 @@ print_token(const antlr4::Token* token,
   if (tokenTypeMapping.find(tokenTypeName) != tokenTypeMapping.end()) {
     tokenTypeName = tokenTypeMapping[tokenTypeName];
   }
-  std::string locInfo = " Loc=<0:0>";
+  //std::string locInfo = " Loc=<0:0>";
+
+  
+
+  std::string locInfo = " Loc=<." + f + ":" + std::to_string(token->getLine()) + ":" +
+                          std::to_string(token->getCharPositionInLine() + 1) +
+                          ">";
 
   bool startOfLine = false;
   bool leadingSpace = false;
+
+  if (token->getCharPositionInLine() == 0) {
+    startOfLine = true;
+  }
+
 
   if (token->getText() != "<EOF>")
     outFile << tokenTypeName << " '" << token->getText() << "'";
   else
     outFile << tokenTypeName << " '"
             << "'";
+  outFile << "\t";
   if (startOfLine)
-    outFile << "\t [StartOfLine]";
+    outFile << " [StartOfLine]";
   if (leadingSpace)
     outFile << " [LeadingSpace]";
   outFile << locInfo << std::endl;
@@ -87,8 +100,15 @@ main(int argc, char* argv[])
 
   antlr4::CommonTokenStream tokens(&lexer);
   tokens.fill();
-
+  std::string str = argv[1];
+  std::string sub = "/task0"; // 要删除的子串
+  size_t pos = str.find(sub); // 查找子串的位置
+  if (pos != std::string::npos) // 如果找到了
+    {
+        str.erase(0, pos + sub.size()); // 删除子串以及前面的内容
+    }
+  int line = 0; // 初始化行号为0
   for (auto&& token : tokens.getTokens()) {
-    print_token(token, tokens, outFile, lexer);
+    print_token(token, tokens, outFile, lexer,str);
   }
 }
