@@ -1,11 +1,17 @@
 #include "SYsU_lang.h" // 确保这里的头文件名与您生成的词法分析器匹配
 #include <fstream>
 #include <iostream>
+#include <regex>
 #include <unordered_map>
 
 // 映射定义，将ANTLR的tokenTypeName映射到clang的格式
 std::unordered_map<std::string, std::string> tokenTypeMapping = {
   { "Int", "int" },
+  { "If", "if" },
+  { "Else", "else" },
+  { "Less", "less" },
+  { "While", "while" },
+  { "Void", "void" },
   { "Identifier", "identifier" },
   { "LeftParen", "l_paren" },
   { "RightParen", "r_paren" },
@@ -19,8 +25,22 @@ std::unordered_map<std::string, std::string> tokenTypeMapping = {
   { "EOF", "eof" },
   { "Equal", "equal" },
   { "Plus", "plus" },
+  { "Star", "star" },
+  { "Slash", "slash" },
   { "Comma", "comma" },
-
+  { "Equalequal","equalequal" },
+  { "Pipepipe","pipepipe" },
+  { "Minus","minus" },
+  { "Const","const" },
+  { "Break","break" },
+  { "Continue","continue" },
+  { "Percent","percent" },
+  { "Greater","greater" },
+  { "Exclaim","exclaim" },
+  { "Lessequal","lessequal" },
+  { "Greaterequal","greaterequal" },
+  { "Exclaimequal","exclaimequal" },
+  { "Ampamp","ampamp" },
   // 在这里继续添加其他映射
 };
 
@@ -29,7 +49,10 @@ print_token(const antlr4::Token* token,
             const antlr4::CommonTokenStream& tokens,
             std::ofstream& outFile,
             const antlr4::Lexer& lexer,
-            std::string f)
+            std::string loc,
+            int line,
+            bool space,
+            bool start)
 {
   auto& vocabulary = lexer.getVocabulary();
 
@@ -46,16 +69,12 @@ print_token(const antlr4::Token* token,
 
   
 
-  std::string locInfo = " Loc=<." + f + ":" + std::to_string(token->getLine()) + ":" +
+  std::string locInfo = " Loc=<"+ loc + ":" + std::to_string(line) + ":" +
                           std::to_string(token->getCharPositionInLine() + 1) +
                           ">";
 
-  bool startOfLine = false;
-  bool leadingSpace = false;
-
-  if (token->getCharPositionInLine() == 0) {
-    startOfLine = true;
-  }
+  bool startOfLine = start;
+  bool leadingSpace = space;
 
 
   if (token->getText() != "<EOF>")
@@ -101,14 +120,47 @@ main(int argc, char* argv[])
   antlr4::CommonTokenStream tokens(&lexer);
   tokens.fill();
   std::string str = argv[1];
-  std::string sub = "/task0"; // 要删除的子串
-  size_t pos = str.find(sub); // 查找子串的位置
-  if (pos != std::string::npos) // 如果找到了
-    {
-        str.erase(0, pos + sub.size()); // 删除子串以及前面的内容
-    }
+
   int line = 0; // 初始化行号为0
+  bool space = false;
+  bool start = false;
+  std::string loc;
+
   for (auto&& token : tokens.getTokens()) {
-    print_token(token, tokens, outFile, lexer,str);
+    //对hidden channel：
+      if (token->getChannel() == lexer.HIDDEN){
+        //对预处理信息，实际上是要取最后一行的数字和文件路径
+        if(token->getType() == lexer.LineAfterPreprocessing){
+          std::string str = token->getText();
+          //取行数
+          std::regex patternOfNum("# ([0-9]+) ");
+          std::smatch matchOfNum;
+          if (std::regex_search(str, matchOfNum, patternOfNum)) {
+            line=std::stoi(matchOfNum[1])-1;
+          }
+          //取文件路径
+          std::regex patternOfLoc("\"(.+?)\"");
+          std::smatch matchOfLoc;
+          if (std::regex_search(str, matchOfLoc, patternOfLoc)) {
+            loc = matchOfLoc[1];
+          }
+        }
+        //空格
+        else if (token->getType() == lexer.Whitespace){
+          space = true;
+        }
+        //换行
+        else if(token->getType() == lexer.Newline){
+          space = false;
+          start = true;
+          line++;
+        }
+      }
+    //对default channel
+      else{
+        print_token(token, tokens, outFile, lexer,loc,line,space,start);
+        space = false;
+        start = false;
+      }
   }
 }
