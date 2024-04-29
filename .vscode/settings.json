@@ -86,7 +86,9 @@
     "__tuple": "cpp",
     "filesystem": "cpp",
     "queue": "cpp",
-    "stack": "cpp"
+    "stack": "cpp",
+    "regex": "cpp",
+    "*.def": "cpp"
   },
   "editor.unfoldOnClickAfterEndOfLine": false,
   "files.eol": "\n",

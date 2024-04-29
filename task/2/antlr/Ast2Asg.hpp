@@ -34,15 +34,27 @@ public:
     ast::DirectDeclaratorContext* ctx,
     TypeExpr* sub);
 
+
+
   //============================================================================
   // 表达式
   //============================================================================
 
   Expr* operator()(ast::ExpressionContext* ctx);
 
+  Expr* operator()(ast::RelationalExpressionContext* ctx);
+
+  Expr* operator()(ast::EqualityExpressionContext* ctx);
+
+  Expr* operator()(ast::AndExpressionContext* ctx);
+
+  Expr* operator()(ast::OrExpressionContext* ctx);
+
   Expr* operator()(ast::AssignmentExpressionContext* ctx);
 
   Expr* operator()(ast::AdditiveExpressionContext* ctx);
+
+  Expr* operator()(ast::MultiplicativeExpressionContext* ctx);
 
   Expr* operator()(ast::UnaryExpressionContext* ctx);
 
@@ -60,6 +72,14 @@ public:
 
   CompoundStmt* operator()(ast::CompoundStatementContext* ctx);
 
+  Stmt* operator()(ast::IfStatementContext* ctx);
+
+  Stmt* operator()(ast::ElseStatementContext* ctx);
+
+  Stmt* operator()(ast::SelectStatementContext* ctx);
+
+  Stmt* operator()(ast::IterationStatementContext* ctx);
+
   Stmt* operator()(ast::ExpressionStatementContext* ctx);
 
   Stmt* operator()(ast::JumpStatementContext* ctx);
@@ -69,6 +89,8 @@ public:
   //============================================================================
 
   std::vector<Decl*> operator()(ast::DeclarationContext* ctx);
+
+  std::vector<Decl*> operator()(ast::ParameterListContext* ctx);
 
   FunctionDecl* operator()(ast::FunctionDefinitionContext* ctx);
 

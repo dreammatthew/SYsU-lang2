@@ -13,7 +13,7 @@ set(TASK2_WITH "antlr")
 # 是否在实验二复活，ON或OFF
 set(TASK2_REVIVE ON)
 # 实验二的日志级别，级别从低到高为0-3
-set(TASK2_LOG_LEVEL 3)
+set(TASK2_LOG_LEVEL 2)
 
 # 是否在实验三复活，ON或OFF
 set(TASK3_REVIVE OFF)
