@@ -5,6 +5,27 @@
 
 namespace asg {
 
+/*
+类型（Type）:
+Type 结构体代表了一个类型，包含类型说明符（如 void, int 等）、类型限定符（如 const）、以及可能的类型表达式（如指针或数组类型）。
+Type::Cache 是一个类型缓存，用于避免重复创建相同的类型实例，以节省内存。
+类型表达式（TypeExpr）:
+TypeExpr 是表示复杂类型（如指针、数组、函数类型）的基类。
+PointerType, ArrayType, FunctionType 是 TypeExpr 的派生类，分别表示指针类型、数组类型和函数类型。
+表达式（Expr）:
+Expr 结构体是所有表达式的基类，包含类型和表达式的类别（如左值或右值）。
+IntegerLiteral, StringLiteral, DeclRefExpr, ParenExpr, UnaryExpr, BinaryExpr, CallExpr, InitListExpr, ImplicitInitExpr, ImplicitCastExpr 是 Expr 的派生类，分别表示整数字面量、字符串字面量、声明引用表达式、括号表达式、一元表达式、二元表达式、函数调用表达式、初始化列表表达式、隐式初始化表达式和隐式类型转换表达式。
+语句（Stmt）:
+Stmt 结构体是所有语句的基类。
+NullStmt, DeclStmt, ExprStmt, CompoundStmt, IfStmt, WhileStmt, DoStmt, BreakStmt, ContinueStmt, ReturnStmt 是 Stmt 的派生类，分别表示空语句、声明语句、表达式语句、复合语句、if语句、while语句、do-while语句、break语句、continue语句和return语句。
+声明（Decl）:
+Decl 结构体是所有声明的基类，包含类型和名称。
+VarDecl, FunctionDecl 是 Decl 的派生类，分别表示变量声明和函数声明。
+顶层（TranslationUnit）:
+TranslationUnit 结构体表示整个程序的顶层结构，包含一系列的声明。
+*/
+
+
 //==============================================================================
 // 类型
 //==============================================================================
@@ -203,11 +224,11 @@ struct BinaryExpr : Expr
     kLe,
     kEq,
     kNe,
-    kAnd,
-    kOr,
+    kAnd,//
+    kOr,//
     kAssign,
-    kComma,
-    kIndex,
+    kComma,//
+    kIndex,//
   };
 
   Op op{ kINVALID };

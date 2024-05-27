@@ -19,7 +19,7 @@ private:
   llvm::Type* mIntTy;
   llvm::FunctionType* mCtorTy;
 
-  llvm::Function* mCurFunc;
+  llvm::Function* mCurFunc{ nullptr };
   std::unique_ptr<llvm::IRBuilder<>> mCurIrb;
 
   //============================================================================
@@ -43,6 +43,13 @@ private:
 
   llvm::Value* operator()(asg::DeclRefExpr* obj);
 
+  llvm::Value* operator()(asg::UnaryExpr* obj);
+
+  llvm::Value* operator()(asg::ParenExpr* obj);
+
+  llvm::Value* operator()(asg::CallExpr* obj);
+
+  llvm::Value* operator()(asg::InitListExpr* obj);
 
   //============================================================================
   // 语句
@@ -55,6 +62,19 @@ private:
   void operator()(asg::ReturnStmt* obj);
 
   // TODO: 添加语句处理相关声明
+  void operator()(asg::DeclStmt* obj);
+
+  void operator()(asg::ExprStmt* obj);
+
+  void operator()(asg::IfStmt* obj);
+
+  void operator()(asg::WhileStmt* obj);
+
+  void operator()(asg::BreakStmt* obj);
+
+  void operator()(asg::ContinueStmt* obj);
+
+  void operator()(asg::NullStmt* obj);
 
   //============================================================================
   // 声明
